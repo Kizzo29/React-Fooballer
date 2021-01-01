@@ -1,25 +1,49 @@
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import TodoItem from './components/TodoItems';
+import TodoView from './components/TodoView';
+import fakeList from "./faker/todolist";
+import { getTeam } from './api/footballer';
+
+
 
 function App() {
+  const [clickedTodo, setClickedTodo] = useState(null)
+  const [team, setTeam] = useState({ players: [] })
+
+  const selectTodo = (todo) => {
+    setClickedTodo(todo)
+  }
+
+  useEffect(() => {
+    getTeam().then((value) => {
+      console.log(value[0]);
+      setTeam(value[0])
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <div>
+      <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">Todo</a>
+      </nav>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6">
+            {
+              team.players.map((player, index) => (<TodoItem player={player} key={index} clicked={selectTodo} />))
+            }
+          </div>
+          <div className="col-md-6">
+            <TodoView selected={clickedTodo} />
+          </div>
+        </div>
+      </div>
+    </div>)
+
 }
 
 export default App;
